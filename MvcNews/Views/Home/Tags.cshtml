@@ -1,0 +1,19 @@
+@model List<Tag>
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Tags</h1>
+    @foreach (Tag t in Model)
+    {
+        @t.Name<br>
+    }
+    <br>
+    <hr>
+    <a asp-controller="Home" asp-action="CreateTag">Create Tag</a><br>
+    <a asp-controller="Home" asp-action="Index">Home</a>
+</div>
+

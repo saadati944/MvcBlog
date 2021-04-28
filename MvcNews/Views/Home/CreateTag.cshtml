@@ -1,0 +1,26 @@
+@model Tag
+
+@{
+    ViewData["Title"] = "Create new tag";
+    Layout = "_Layout";
+}
+
+<div class="text-center">
+    <h1 class="display-4">New tag</h1>
+    <br>
+    <form asp-controller="Home" asp-action="CreateTag">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+    </form>
+    <br>
+    <hr>
+    <a asp-controller="Home" asp-action="Tags">Tags</a>
+    <a asp-controller="Home" asp-action="Index">Home</a>
+</div>
