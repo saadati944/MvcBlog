@@ -6,7 +6,7 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
-      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.0-preview.3.21201.13" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.4" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.5" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.5">
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
