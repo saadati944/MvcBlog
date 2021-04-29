@@ -36,38 +36,5 @@ namespace MvcNews.Controllers
         {
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
-        
-        
-        // tags
-        [HttpGet]
-        public IActionResult Tags()
-        {
-            return View(_context.Tags.ToList());
-        }
-
-        [HttpGet]
-        public IActionResult CreateTag()
-        {
-            return View();
-        }
-        [HttpPost]
-        public IActionResult CreateTag(Tag newtag)
-        {
-            _context.Tags.Add(newtag);
-            _logger.LogInformation(newtag.Id.ToString());
-            _logger.LogInformation(newtag.Name);
-            _context.SaveChanges();
-            _logger.LogInformation(_context.Tags.ToList().Count.ToString());
-            return RedirectToAction("Tags", "Home");
-        }
-        
-        // [HttpGet]
-        // public IActionResult TagPosts(string? name)
-        // {
-        //     if (String.IsNullOrEmpty(name))
-        //         return Tags();
-        //
-        //     return View();
-        // }
     }
 }

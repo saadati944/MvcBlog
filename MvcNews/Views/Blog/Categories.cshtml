@@ -1,0 +1,18 @@
+@model List<Category>
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Categories";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Categories</h1>
+    @foreach (Category t in Model)
+    {
+        @t.Name<br>
+    }
+    <br>
+    <hr>
+    <a asp-controller="Blog" asp-action="CreateCategory">Create Category</a><br>
+    <a asp-controller="Home" asp-action="Index">Home</a>
+</div>

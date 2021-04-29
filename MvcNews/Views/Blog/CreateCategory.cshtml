@@ -1,14 +1,14 @@
-@model Tag
+@model Category
 
 @{
-    ViewData["Title"] = "Create new tag";
+    ViewData["Title"] = "Create new Category";
     Layout = "_Layout";
 }
 
 <div class="text-center">
-    <h1 class="display-4">New tag</h1>
+    <h1 class="display-4">New Category</h1>
     <br>
-    <form asp-controller="Home" asp-action="CreateTag">
+    <form asp-controller="Blog" asp-action="CreateCategory">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="Name" class="control-label"></label>
@@ -21,6 +21,6 @@
     </form>
     <br>
     <hr>
-    <a asp-controller="Home" asp-action="Tags">Tags</a>
+    <a asp-controller="Blog" asp-action="Categories">Categories</a>
     <a asp-controller="Home" asp-action="Index">Home</a>
 </div>
