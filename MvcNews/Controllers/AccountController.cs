@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
+using aspNews.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Internal;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +13,13 @@ namespace MvcNews.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly UserIdentityDbContext _context;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager) : base()
+        public AccountController(UserIdentityDbContext context, UserManager<User> userManager, SignInManager<User> signInManager) : base()
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
 
         //logout
@@ -79,6 +83,11 @@ namespace MvcNews.Controllers
                 UserName = newUser.UserName,
                 Email = newUser.Email
             };
+            if (_context.Users.Count() == 0)
+                user.IsSuperUser = true;
+            
+            //todo: only admins can create posts.
+            user.IsAdmin = true;
             var result = await _userManager.CreateAsync(user, newUser.Password);
             if (!result.Succeeded)
             {
