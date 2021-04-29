@@ -21,6 +21,8 @@ namespace MvcNews.Controllers
             return View(_context.Categories.ToList());
         }
 
+        
+        //todo: users should not be able to manually create categories, so remove this parts and their pages after creating a form to create new post.
         [HttpGet]
         public IActionResult CreateCategory()
         {
@@ -33,5 +35,7 @@ namespace MvcNews.Controllers
             _context.SaveChanges();
             return RedirectToAction("Categories", "Blog");
         }
+        
+        
     }
 }
