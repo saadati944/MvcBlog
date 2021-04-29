@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using aspNews.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Internal;
 using Microsoft.AspNetCore.Mvc;
 using MvcNews.Models;
 
