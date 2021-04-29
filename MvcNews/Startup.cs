@@ -2,13 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using aspNews.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MvcNews.Data;
+using MvcNews.Models;
 
 namespace MvcNews
 {
@@ -25,7 +29,10 @@ namespace MvcNews
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddDbContext<Data.NewsDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("dockersql")));
+            services.AddDbContext<NewsDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("dockersql")));
+            services.AddDbContext<UserIdentityDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("dockersql")));
+
+            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<UserIdentityDbContext>().AddDefaultTokenProviders();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +55,7 @@ namespace MvcNews
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
