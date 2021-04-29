@@ -12,7 +12,10 @@ namespace MvcNews.Models
         public string Title { get; set; }
         public string Abstract { get; set; }
         public string Content { get; set; }
+        
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
 
-        public IList Tags { get; } = new List<Tag>();
+        public ICollection PostTags { get; } = new List<PostTag>();
     }
 }
