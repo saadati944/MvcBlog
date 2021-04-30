@@ -50,12 +50,12 @@ namespace MvcNews.Controllers
             setUser();
             if (!_user.IsAdmin)
                 return RedirectToAction("Index", "Home");
-            
+
             return View();
         }
 
         [HttpPost]
-        public IActionResult CreatePost(postModel newPost)
+        public IActionResult CreatePost(PostModel newPost)
         {
             setUser();
             if (!_user.IsAdmin)
@@ -83,7 +83,7 @@ namespace MvcNews.Controllers
         }
 
 
-        public class postModel
+        public class PostModel
         {
             [Required] public string Title { get; set; }
 
@@ -101,17 +101,18 @@ namespace MvcNews.Controllers
 
         private string getPosterPath(IFormFile file)
         {
-            if(file is null)
+            if (file is null)
                 return "";
-            
-            string relationalPath = Path.Combine(Program.UploadPath, file.FileName); 
-            
-            using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relationalPath), FileMode.Create))
+
+            string relationalPath = Path.Combine(Program.UploadPath, file.FileName);
+
+            using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relationalPath),
+                FileMode.Create))
                 file.CopyToAsync(stream).Wait();
 
             return relationalPath;
         }
-        
+
         private Category GetCategory(string name)
         {
             name = name.Trim();
@@ -170,7 +171,7 @@ namespace MvcNews.Controllers
                 ViewData["AuthorName"] = author.UserName;
             else
                 ViewData["AuthorName"] = "Unknown";
-                
+
             if (p is null)
                 return RedirectToAction("Index", "Home");
 
@@ -193,43 +194,105 @@ namespace MvcNews.Controllers
             if (!_user.IsAdmin)
                 return RedirectToAction("Index", "Home");
 
-            return View(_context.Posts.Where(x => x.UserId == _user.Id).OrderByDescending(x=>x.CreationDate).Include(x => x.PostTags).ThenInclude(x => x.Tag)
+            return View(_context.Posts.Where(x => x.UserId == _user.Id).OrderByDescending(x => x.CreationDate)
+                .Include(x => x.PostTags).ThenInclude(x => x.Tag)
                 .Include(x => x.Category));
         }
 
         public IActionResult RemovePost(int? id)
         {
             setUser();
-            if(!_user.IsAdmin || id is null)
+            if (!_user.IsAdmin || id is null)
                 return RedirectToAction("Index", "Home");
-            Post p = _context.Posts.Include(x=>x.Category).FirstOrDefault(x => x.Id == id);
-            if(p is null)
+            Post p = _context.Posts.Include(x => x.Category).FirstOrDefault(x => x.Id == id);
+            if (p is null)
                 return RedirectToAction("MyPosts", "Blog");
             ViewData["post"] = p;
-            return View(new confirmPostRemovingModel{Sure = true, Id = p.Id});
-        }
-        
-        public IActionResult RemovePostConfirm(confirmPostRemovingModel confirmed)
-        {
-            setUser();
-            if(!_user.IsAdmin || !confirmed.Sure)
-                return RedirectToAction("Index", "Home");
-            Post p = _context.Posts.Include(x=>x.Category).FirstOrDefault(x => x.Id == confirmed.Id);
-            if(p is null)
-                return RedirectToAction("MyPosts", "Blog");
-            
-            _context.Remove(p);
-            _context.SaveChanges();
-            
-            return RedirectToAction("MyPosts", "Blog");
-        }
-        public class confirmPostRemovingModel
-        {
-            [HiddenInput]
-            public bool Sure { get; set; } = true;
-            [HiddenInput]
-            public int Id { get; set; }
+            return View(new ConfirmPostRemovingModel {Sure = true, Id = p.Id});
         }
 
+        public IActionResult RemovePostConfirm(ConfirmPostRemovingModel confirmed)
+        {
+            setUser();
+            if (!_user.IsAdmin || !confirmed.Sure)
+                return RedirectToAction("Index", "Home");
+            Post p = _context.Posts.Include(x => x.Category).FirstOrDefault(x => x.Id == confirmed.Id);
+            if (p is null)
+                return RedirectToAction("MyPosts", "Blog");
+
+            _context.Remove(p);
+            _context.SaveChanges();
+
+            return RedirectToAction("MyPosts", "Blog");
+        }
+
+        public class ConfirmPostRemovingModel
+        {
+            [HiddenInput] public bool Sure { get; set; } = true;
+            [HiddenInput] public int Id { get; set; }
+        }
+
+        public IActionResult EditPost(int? id)
+        {
+            setUser();
+            if (!_user.IsAdmin || id is null)
+                return RedirectToAction("Index", "Home");
+            Post p = _context.Posts.Include(x => x.Category).Include(x => x.PostTags).ThenInclude(x => x.Tag)
+                .FirstOrDefault(x => x.Id == id);
+            if (p is null)
+                return RedirectToAction("MyPosts", "Blog");
+            var pm = new PostModel
+            {
+                Title = p.Title,
+                Abstract = p.Abstract,
+                Content = p.Content,
+                Category = p.Category.Name,
+                Tags = String.Join(", ", p.PostTags.Select(x => x.Tag.Name))
+            };
+            ViewData["postid"] = id;
+            return View(pm);
+        }
+        
+        [HttpPost]
+        public IActionResult EditPost(int? id, PostModel postModel)
+        {
+            setUser();
+            if (!_user.IsAdmin || id is null)
+                return RedirectToAction("Index", "Home");
+            
+            Post p = _context.Posts.Include(x => x.Category).Include(x => x.PostTags).ThenInclude(x => x.Tag)
+                .FirstOrDefault(x => x.Id == id);
+            if (p is null)
+                return RedirectToAction("MyPosts", "Blog");
+            
+            setUser();
+            if (!_user.IsAdmin)
+                return RedirectToAction("Index", "Home");
+            if (!ModelState.IsValid)
+                return View();
+
+            p.Title = postModel.Title;
+            p.Abstract = postModel.Abstract;
+            p.Content = postModel.Content;
+            // CreationDate = DateTime.Now;
+            // UserId = _user.Id;
+            p.Poster = postModel.Poster is not null ? getPosterPath(postModel.Poster) : p.Poster;
+            p.Category = GetCategory(postModel.Category);
+
+            foreach (PostTag pt in p.PostTags)
+            {
+                _context.Remove(pt);
+            }
+            
+            // _context.SaveChanges();
+            p.PostTags.Clear();
+            
+            SetPostTags(postModel.Tags, p);
+
+            _context.SaveChanges();
+
+            return RedirectToAction("MyPosts");
+            
+        }
     }
 }
