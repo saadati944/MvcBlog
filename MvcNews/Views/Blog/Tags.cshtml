@@ -1,0 +1,21 @@
+@model List<Tag>
+
+@{
+    ViewData["Title"] = "Tags list";
+    Layout = "_Layout";
+}
+
+<div class="text-center">
+    <div class="text-left">
+        <h1>Tags</h1>
+        <br>
+        @foreach (Tag t in Model)
+        {
+            <h3>@t.Name</h3>
+            foreach (var p in t.PostTags)
+            {
+                <a style="margin: 10px" asp-controller="Blog" asp-action="Post" asp-route-id="@p.PostId">@p.Post.Title</a>
+            }
+        }
+    </div>
+</div>

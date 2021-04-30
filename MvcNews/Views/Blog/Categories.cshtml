@@ -1,18 +1,21 @@
 @model List<Category>
 
 @{
+    ViewData["Title"] = "Categories list";
     Layout = "_Layout";
-    ViewData["Title"] = "Categories";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Categories</h1>
-    @foreach (Category t in Model)
-    {
-        @t.Name<br>
-    }
-    <br>
-    <hr>
-    <a asp-controller="Blog" asp-action="CreateCategory">Create Category</a><br>
-    <a asp-controller="Home" asp-action="Index">Home</a>
+    <div class="text-left">
+        <h1>Categories</h1>
+        <br>
+        @foreach (Category category in Model)
+        {
+            <h3>@category.Name</h3>
+            foreach (var p in category.Posts)
+            {
+                <a style="margin: 10px" asp-controller="Blog" asp-action="Post" asp-route-id="@p.Id">@p.Title</a>
+            }
+        }
+    </div>
 </div>

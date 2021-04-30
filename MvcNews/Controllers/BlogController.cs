@@ -34,7 +34,6 @@ namespace MvcNews.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-
         }
 
         private void setUser()
@@ -159,6 +158,16 @@ namespace MvcNews.Controllers
                 return RedirectToAction("Index", "Home");
 
             return View(p);
+        }
+
+        public IActionResult Tags()
+        {
+            return View(_context.Tags.Include(x => x.PostTags).ThenInclude(x => x.Post).ToList());
+        }
+
+        public IActionResult Categories()
+        {
+            return View(_context.Categories.Include(x => x.Posts).ToList());
         }
     }
 }
