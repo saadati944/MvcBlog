@@ -1,12 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace MvcNews.Models
 {
     public class PostTag
     {
-        [Key]
-        public int Id { get; set; }
-        
         public int PostId { get; set; }
         public int TagId { get; set; }
         

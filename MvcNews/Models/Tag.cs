@@ -9,7 +9,7 @@ namespace MvcNews.Models
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-        
-        public ICollection PostTags { get; } = new List<PostTag>();
+
+        public List<PostTag> PostTags { get; } = new();
     }
 }
