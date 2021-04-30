@@ -6,15 +6,23 @@
     Layout = "_Layout";
 }
 
-<h2>@Model.Title</h2>
-
-<div class="text-center">@Model.Content</div>
-
-<h3>Category</h3><p>@Model.Category.Name</p>
-<div>
-    <h3>Tags</h3>
-    @foreach (PostTag pt in @Model.PostTags)
-    {
-        <p>@pt.Tag.Name</p>
-    }
+<div class="text-left">
+    <h2 class="text-center">@Model.Title</h2>
+    <br>
+    <img style="display: block; width: 100%; max-width: 1140px" src="../../@Model.Poster"/>
+    <hr>
+    <pre>@Model.Content</pre>
+    <br>
+    <br>
+    <p class="small">Written by : @ViewData["AuthorName"] @@ @Model.CreationDate.ToLongDateString()</p>
+    <hr>
+    <div>
+        <h3>Category</h3>
+        <p>@Model.Category.Name</p>
+        <h3>Tags</h3>
+        @foreach (PostTag pt in @Model.PostTags)
+        {
+            <p style="display: inline-block; margin-right: 10px">@pt.Tag.Name</p>
+        }
+    </div>
 </div>

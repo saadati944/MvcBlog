@@ -161,10 +161,16 @@ namespace MvcNews.Controllers
 
         public IActionResult Post(int id)
         {
-            Models.Post p = _context.Posts.Include(x => x.Category)
+            Post p = _context.Posts.Include(x => x.Category)
                 .Include(x => x.PostTags).ThenInclude(x => x.Tag).FirstOrDefault(p => p.Id == id);
 
-            ViewData["context"] = _context;
+            User author = _identityContext.Users.FirstOrDefault(x => x.Id == p.UserId);
+
+            if (author is not null)
+                ViewData["AuthorName"] = author.UserName;
+            else
+                ViewData["AuthorName"] = "Unknown";
+                
             if (p is null)
                 return RedirectToAction("Index", "Home");
 
