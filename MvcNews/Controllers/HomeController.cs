@@ -32,18 +32,20 @@ namespace MvcNews.Controllers
             user.Wait();
             _user = user.Result;
         }
-        
+
         public IActionResult Index()
         {
             setUser();
-            if(_user is null)
+            if (_user is null)
             {
                 ViewData["loggedin"] = false;
-                return View(_context.Posts.OrderByDescending(x=>x.CreationDate).Take(10).Include(x=>x.Category).ToList());
+                return View(_context.Posts.OrderByDescending(x => x.CreationDate).Take(10).Include(x => x.Category)
+                    .Include(x => x.PostTags).ThenInclude(x => x.Tag).ToList());
             }
 
             ViewData["loggedin"] = true;
-            return View(_context.Posts.OrderByDescending(x=>x.CreationDate).Take(10).Include(x=>x.Category).ToList());
+            return View(_context.Posts.OrderByDescending(x => x.CreationDate).Take(10).Include(x => x.Category)
+                .Include(x => x.PostTags).ThenInclude(x => x.Tag).ToList());
 
         }
 
