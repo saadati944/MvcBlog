@@ -26,14 +26,15 @@ namespace MvcNews.Controllers
         private bool _isAdmin;
         private User _user;
 
-        public BlogController(ILogger<BlogController> logger, NewsDbContext context, UserIdentityDbContext identityContext, UserManager<User> userManager, SignInManager<User> signInManager)
+        public BlogController(ILogger<BlogController> logger, NewsDbContext context,
+            UserIdentityDbContext identityContext, UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _context = context;
             _identityContext = identityContext;
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            
+
         }
 
         private void setUser()
@@ -44,13 +45,14 @@ namespace MvcNews.Controllers
             _isAdmin = _user.IsAdmin;
         }
 
-        // posts
+        #region CreatePost
+
         public IActionResult CreatePost()
         {
             setUser();
             if (!_isAdmin)
                 return RedirectToAction("Index", "Home");
-            
+
             return View();
         }
 
@@ -60,7 +62,7 @@ namespace MvcNews.Controllers
             setUser();
             if (!_isAdmin)
                 return RedirectToAction("Index", "Home");
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return View();
 
             Post post = new Post
@@ -74,33 +76,29 @@ namespace MvcNews.Controllers
                 // Poster = newPost.Poster.FileName,
                 Category = GetCategory(newPost.Category)
             };
-            
+
             SetPostTags(newPost.Tags, post);
-            
+
             _context.Posts.Add(post);
             _context.SaveChanges();
-            
+
             return RedirectToAction("Index", "Home");
         }
 
 
         public class postModel
         {
-            [Required]
-            public string Title { get; set; }
-            
-            [Required]
-            public string Abstract { get; set; }
-            
-            [Required]
-            public string Content { get; set; }
-            
-            [Required]
-            public string Category { get; set; }
-            
+            [Required] public string Title { get; set; }
+
+            [Required] public string Abstract { get; set; }
+
+            [Required] public string Content { get; set; }
+
+            [Required] public string Category { get; set; }
+
             [Display(Name = "Tags", Prompt = "tags, separated, with, commas")]
             public string Tags { get; set; }
-            
+
             public IFormFile Poster { set; get; }
         }
 
@@ -108,7 +106,7 @@ namespace MvcNews.Controllers
         {
             name = name.Trim();
             Category c = _context.Categories.FirstOrDefault(x => x.Name == name);
-            
+
             if (c is not null)
                 return c;
 
@@ -118,10 +116,10 @@ namespace MvcNews.Controllers
             };
             return c;
         }
-        
+
         private void SetPostTags(string tagNames, Post post)
         {
-            var tags = tagNames.Split(',').Select(x=>x.Trim());
+            var tags = tagNames.Split(',').Select(x => x.Trim());
             foreach (var t in tags)
             {
                 Tag tag = GetTag(t);
@@ -133,12 +131,12 @@ namespace MvcNews.Controllers
                 _context.PostTags.Add(pt);
             }
         }
-        
+
         private Tag GetTag(string name)
         {
             name = name.Trim();
             Tag c = _context.Tags.FirstOrDefault(x => x.Name == name);
-            
+
             if (c is not null)
                 return c;
 
@@ -149,5 +147,18 @@ namespace MvcNews.Controllers
             return c;
         }
 
+        #endregion
+
+        public IActionResult Post(int id)
+        {
+            Models.Post p = _context.Posts.Include(x => x.Category)
+                .Include(x => x.PostTags).ThenInclude(x => x.Tag).FirstOrDefault(p => p.Id == id);
+
+            ViewData["context"] = _context;
+            if (p is null)
+                return RedirectToAction("Index", "Home");
+
+            return View(p);
+        }
     }
 }
