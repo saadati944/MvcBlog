@@ -1,0 +1,26 @@
+@model MvcNews.Controllers.BlogController.confirmPostRemovingModel
+
+@{
+    ViewBag.Title = "Confirm Deleting Post";
+    Layout = "_Layout";
+}
+<h1>Confirm to delete this post :</h1>
+<h3>Title</h3>
+<p>@(((Post)ViewData["post"]).Title)</p>
+
+<h3>Abstract</h3>
+<p>@(((Post)ViewData["post"]).Abstract)</p>
+
+<h3>Creation date</h3>
+<p>@(((Post)ViewData["post"]).CreationDate.ToLongDateString())</p>
+
+<h3>Category</h3>
+<p>@(((Post) ViewData["post"]).Category.Name)</p>
+
+<form asp-controller="Blog" asp-action="RemovePostConfirm">
+    <input asp-for="Sure">
+    <input asp-for="Id">
+    
+    <a class="btn btn-primary" asp-controller="Blog" asp-action="MyPosts">Cancele</a>
+    <input type="submit" class="btn btn-warning" />
+</form>

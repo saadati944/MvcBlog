@@ -193,8 +193,43 @@ namespace MvcNews.Controllers
             if (!_user.IsAdmin)
                 return RedirectToAction("Index", "Home");
 
-            return View(_context.Posts.Where(x => x.UserId == _user.Id).Include(x => x.PostTags).ThenInclude(x => x.Tag)
+            return View(_context.Posts.Where(x => x.UserId == _user.Id).OrderByDescending(x=>x.CreationDate).Include(x => x.PostTags).ThenInclude(x => x.Tag)
                 .Include(x => x.Category));
         }
+
+        public IActionResult RemovePost(int? id)
+        {
+            setUser();
+            if(!_user.IsAdmin || id is null)
+                return RedirectToAction("Index", "Home");
+            Post p = _context.Posts.Include(x=>x.Category).FirstOrDefault(x => x.Id == id);
+            if(p is null)
+                return RedirectToAction("MyPosts", "Blog");
+            ViewData["post"] = p;
+            return View(new confirmPostRemovingModel{Sure = true, Id = p.Id});
+        }
+        
+        public IActionResult RemovePostConfirm(confirmPostRemovingModel confirmed)
+        {
+            setUser();
+            if(!_user.IsAdmin || !confirmed.Sure)
+                return RedirectToAction("Index", "Home");
+            Post p = _context.Posts.Include(x=>x.Category).FirstOrDefault(x => x.Id == confirmed.Id);
+            if(p is null)
+                return RedirectToAction("MyPosts", "Blog");
+            
+            _context.Remove(p);
+            _context.SaveChanges();
+            
+            return RedirectToAction("MyPosts", "Blog");
+        }
+        public class confirmPostRemovingModel
+        {
+            [HiddenInput]
+            public bool Sure { get; set; } = true;
+            [HiddenInput]
+            public int Id { get; set; }
+        }
+
     }
 }

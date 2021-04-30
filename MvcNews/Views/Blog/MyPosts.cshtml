@@ -5,18 +5,22 @@
     Layout = "_Layout";
 }
 
-<h2>My Posts</h2>
+<h2 class="text-center">My Posts</h2>
 
 <div class="content-box-container">
 @foreach(Post p in Model)
 {
-    <a asp-controller="Blog" asp-action="Post" asp-route-id="@p.Id" class="content-box-a">
+    <a asp-controller="Blog" asp-action="Post" asp-route-id="@p.Id" class="content-box-a" style="color: black;">
         <div class="content-box">
             <h1 class="content-box-header">@p.Title</h1>
-            <img class="content-box-poster" src="../@(p.Poster is not null ? p.Poster : "")"/>
+            <img class="content-box-poster" style="height: 100px" src="../@(p.Poster is not null ? p.Poster : "")"/>
             <p class="content-box-abstract">@p.Abstract</p>
             <p class="content-box-footer">@p.Category.Name</p>
             <p class="content-box-footer">@(String.Join(", ", p.PostTags.Take(3).Select(p=>p.Tag.Name))), ...</p>
+            <div>
+                <a class="btn btn-warning" style="display: inline-block; width: 97px; height: 20px; font-size: small; padding-top: 1px; margin: 0" asp-controller="Blog" asp-action="RemovePost" asp-route-id="@p.Id">Remove</a>
+                <a class="btn btn-primary" style="display: inline-block; width: 97px; height: 20px; font-size: small; padding-top: 1px; margin: 0" asp-controller="Blog" asp-action="EditPost" asp-route-id="@p.Id">Edit</a>
+            </div>
         </div>
     </a>
 }
