@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using aspNews.Data;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using MvcNews.Data;
 using MvcNews.Models;
@@ -29,10 +31,15 @@ namespace MvcNews
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddDbContext<NewsDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("dockersql")));
-            services.AddDbContext<UserIdentityDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("dockersql")));
-
-            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<UserIdentityDbContext>().AddDefaultTokenProviders();
+            services.AddDbContext<NewsDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("dockersql")));
+            services.AddDbContext<UserIdentityDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("dockersql")));
+            services.AddSingleton<IFileProvider>(
+                new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Program.UploadPath)));
+            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<UserIdentityDbContext>()
+                .AddDefaultTokenProviders();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

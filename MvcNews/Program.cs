@@ -11,6 +11,7 @@ namespace MvcNews
 {
     public class Program
     {
+        public static string UploadPath = "uploads";
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();

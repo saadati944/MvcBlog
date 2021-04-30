@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -69,8 +70,7 @@ namespace MvcNews.Controllers
                 Content = newPost.Content,
                 CreationDate = DateTime.Now,
                 UserId = _user.Id,
-                //todo: set the image url here
-                // Poster = newPost.Poster.FileName,
+                Poster = getPosterPath(newPost.Poster),
                 Category = GetCategory(newPost.Category)
             };
 
@@ -99,6 +99,19 @@ namespace MvcNews.Controllers
             public IFormFile Poster { set; get; }
         }
 
+        private string getPosterPath(IFormFile file)
+        {
+            if(file is null)
+                return "";
+            
+            string relationalPath = Path.Combine(Program.UploadPath, file.FileName); 
+            
+            using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relationalPath), FileMode.Create))
+                file.CopyToAsync(stream).Wait();
+
+            return relationalPath;
+        }
+        
         private Category GetCategory(string name)
         {
             name = name.Trim();
