@@ -1,23 +1,25 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@model List<Post>
+
 @{
+    Layout = "_Layout";
     ViewData["Title"] = "Home Page";
 }
-@inject SignInManager<User> _signInManager
+
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
     <br>
-    @if (_signInManager.IsSignedIn(User))
+    <div class="content-box-container">
+    @foreach(Post p in Model)
     {
-        <h1>@_signInManager.UserManager.GetUserName(User)</h1>
+        <a asp-controller="Blog" asp-action="Post" asp-route-id="@p.Id" class="content-box-a">
+            <div class="content-box">
+                <h1 class="content-box-header">@p.Title</h1>
+                <img class="content-box-poster" src="../@(p.Poster is not null ? p.Poster : "")"/>
+                <p class="content-box-abstract">@p.Abstract</p>
+                <p class="content-box-footer">@p.Category.Name</p>
+                <p class="content-box-footer">@(String.Join(", ", p.PostTags.Take(3).Select(p=>p.Tag.Name))), ...</p>
+            </div>
+        </a>
     }
-    <hr>
-    <a asp-controller="Account" asp-action="Login">Login</a><br>
-    <a asp-controller="Account" asp-action="LogOut">Logout</a><br>
-    <a asp-controller="Account" asp-action="SignUp">Sing up</a><br>
-    <br>
-    <a asp-controller="Blog" asp-action="Tags">tags</a><br>
-    <a asp-controller="Blog" asp-action="MyPosts">posts</a><br>
-    <a asp-controller="Blog" asp-action="Categories">Categories</a><br>
-    <a asp-controller="Blog" asp-action="CreatePost">Create post</a><br>
+    </div>
 </div>

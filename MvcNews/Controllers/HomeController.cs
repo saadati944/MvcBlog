@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MvcNews.Data;
 using MvcNews.Models;
@@ -13,17 +15,36 @@ namespace MvcNews.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<User> _userManager;
         private readonly NewsDbContext _context;
+        private User _user;
 
-        public HomeController(ILogger<HomeController> logger, NewsDbContext context)
+        public HomeController(UserManager<User> userManager, ILogger<HomeController> logger, NewsDbContext context)
         {
             _logger = logger;
             _context = context;
+            _userManager = userManager;
         }
 
+        private void setUser()
+        {
+            Task<Models.User> user = _userManager.GetUserAsync(User);
+            user.Wait();
+            _user = user.Result;
+        }
+        
         public IActionResult Index()
         {
-            return View();
+            setUser();
+            if(_user is null)
+            {
+                ViewData["loggedin"] = false;
+                return View(_context.Posts.OrderByDescending(x=>x.CreationDate).Take(10).Include(x=>x.Category).ToList());
+            }
+
+            ViewData["loggedin"] = true;
+            return View(_context.Posts.OrderByDescending(x=>x.CreationDate).Take(10).Include(x=>x.Category).ToList());
+
         }
 
         public IActionResult Privacy()
