@@ -1,0 +1,54 @@
+@model MvcNews.Controllers.BlogController.postModel
+
+@{
+    ViewData["Title"] = "New Post";
+    Layout = "_Layout";
+}
+
+
+<div class="text-center">
+    <h1 class="display-4">Create new post</h1>
+    <br>
+    <form asp-controller="Blog" asp-action="CreatePost">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Title"></label>
+            <input asp-for="Title" class="form-control"/>
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Abstract"></label>
+            <input asp-for="Abstract" class="form-control"/>
+            <span asp-validation-for="Abstract" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Content"></label>
+            @* <input asp-for="Content" class="form-control"/> *@
+            @* @Html.TextAreaFor(m => m.Content); *@
+            @Html.TextArea("Content", "", new { @class = "form-control" })
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Category"></label>
+            <input asp-for="Category" class="form-control"/>
+            <span asp-validation-for="Category" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Tags"></label>
+            <input asp-for="Tags" class="form-control"/>
+            <span asp-validation-for="Tags" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Poster"></label>
+            <input asp-for="Poster" class="form-control"/>
+            <span asp-validation-for="Poster" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+</div>
+
+<style>
+    textarea {
+      min-height: 200px;
+    }
+</style>
