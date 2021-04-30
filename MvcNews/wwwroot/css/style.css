@@ -1,0 +1,58 @@
+
+.content-box-a {
+    text-decoration: none !important;
+}
+.content-box {
+    display: inline-block;
+    alignment-baseline: top;
+    border: 1px solid #8b8b89;
+    border-radius: 5px;
+    box-shadow: #8b8b89 2px 2px;
+    color: black;
+    text-decoration: none !important;
+    margin: 15px;
+    width: 200px;
+    height: 300px;
+    text-align: left;
+}
+
+.content-box-container {
+    display: block;
+    text-align: center;
+    alignment-baseline: top;
+}
+
+.content-box-header {
+    text-align: center;
+    display: block;
+    font-size: x-large;
+    width: 200px;
+    height: 30px;
+    overflow: hidden;
+}
+
+.content-box-poster {
+    margin: 0;
+    display: block;
+    width: 200px;
+    height: 120px;
+    object-fit: contain;
+}
+
+.content-box-abstract {
+    margin: 0;
+    display: block;
+    width: 200px;
+    height: 100px;
+    overflow: hidden;
+}
+
+.content-box-footer {
+    margin: 0;
+    display: block;
+    margin-left: 5px;
+    width: 190px;
+    height: 20px;
+    font-size: small;
+    overflow: hidden;
+}
