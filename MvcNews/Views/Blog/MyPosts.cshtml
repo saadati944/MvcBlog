@@ -1,0 +1,23 @@
+@model System.Linq.IQueryable<MvcNews.Models.Post>
+
+@{
+    ViewBag.Title = "My Posts";
+    Layout = "_Layout";
+}
+
+<h2>My Posts</h2>
+
+<div class="content-box-container">
+@foreach(Post p in Model)
+{
+    <a asp-controller="Blog" asp-action="Post" asp-route-id="@p.Id" class="content-box-a">
+        <div class="content-box">
+            <h1 class="content-box-header">@p.Title</h1>
+            <img class="content-box-poster" src="@(p.Poster is not null ? p.Poster : "")"/>
+            <p class="content-box-abstract">@p.Abstract</p>
+            <p class="content-box-footer">@p.Category.Name</p>
+            <p class="content-box-footer">@(String.Join(", ", p.PostTags.Take(3).Select(p=>p.Tag.Name))), ...</p>
+        </div>
+    </a>
+}
+</div>

@@ -23,7 +23,6 @@ namespace MvcNews.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger<BlogController> _logger;
-        private bool _isAdmin;
         private User _user;
 
         public BlogController(ILogger<BlogController> logger, NewsDbContext context,
@@ -41,7 +40,6 @@ namespace MvcNews.Controllers
             Task<Models.User> user = _userManager.GetUserAsync(User);
             user.Wait();
             _user = user.Result;
-            _isAdmin = _user.IsAdmin;
         }
 
         #region CreatePost
@@ -49,9 +47,9 @@ namespace MvcNews.Controllers
         public IActionResult CreatePost()
         {
             setUser();
-            if (!_isAdmin)
+            if (!_user.IsAdmin)
                 return RedirectToAction("Index", "Home");
-
+            
             return View();
         }
 
@@ -59,7 +57,7 @@ namespace MvcNews.Controllers
         public IActionResult CreatePost(postModel newPost)
         {
             setUser();
-            if (!_isAdmin)
+            if (!_user.IsAdmin)
                 return RedirectToAction("Index", "Home");
             if (!ModelState.IsValid)
                 return View();
@@ -70,7 +68,7 @@ namespace MvcNews.Controllers
                 Abstract = newPost.Abstract,
                 Content = newPost.Content,
                 CreationDate = DateTime.Now,
-                // User = _user,
+                UserId = _user.Id,
                 //todo: set the image url here
                 // Poster = newPost.Poster.FileName,
                 Category = GetCategory(newPost.Category)
@@ -168,6 +166,16 @@ namespace MvcNews.Controllers
         public IActionResult Categories()
         {
             return View(_context.Categories.Include(x => x.Posts).ToList());
+        }
+
+        public IActionResult MyPosts()
+        {
+            setUser();
+            if (!_user.IsAdmin)
+                return RedirectToAction("Index", "Home");
+
+            return View(_context.Posts.Where(x => x.UserId == _user.Id).Include(x => x.PostTags).ThenInclude(x => x.Tag)
+                .Include(x => x.Category));
         }
     }
 }

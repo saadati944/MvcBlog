@@ -20,7 +20,6 @@ namespace MvcNews.Models
         [DataType(DataType.DateTime)]
         public DateTime CreationDate { get; set; }
         
-        public User User { get; set; }
         public string UserId { get; set; }
         
         public int CategoryId { get; set; }
