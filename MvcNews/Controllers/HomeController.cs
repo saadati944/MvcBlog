@@ -33,10 +33,9 @@ namespace MvcNews.Controllers
             _user = user.Result;
             if (_user is not null)
             {
-                ViewData["username"] = _user.UserName;   
+                ViewData["username"] = _user.UserName;
+                ViewData["showsignin"] = false;
             }
-            else
-                ViewData["showsignin"] = true;
         }
 
         public IActionResult Index()

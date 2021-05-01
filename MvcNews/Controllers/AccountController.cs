@@ -13,12 +13,26 @@ namespace MvcNews.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly UserIdentityDbContext _context;
+        private User _user;
 
         public AccountController(UserIdentityDbContext context, UserManager<User> userManager, SignInManager<User> signInManager) : base()
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
+        }
+        
+        private void setUser()
+        {
+            Task<Models.User> user = _userManager.GetUserAsync(User);
+            user.Wait();
+            _user = user.Result;
+            if (_user is not null)
+            {
+                ViewData["username"] = _user.UserName;
+            }
+            else
+                ViewData["showsignin"] = true;
         }
 
         //logout
@@ -82,7 +96,7 @@ namespace MvcNews.Controllers
                 UserName = newUser.UserName,
                 Email = newUser.Email
             };
-            if (_context.Users.Count() == 0)
+            if (_context.Users.Any())
                 user.IsSuperUser = true;
             
             //todo: only admins can create posts.
@@ -119,6 +133,17 @@ namespace MvcNews.Controllers
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+        }
+
+
+        public IActionResult ShowUsers()
+        {
+            setUser();
+            if (_user is null || !_user.IsSuperUser)
+                return RedirectToAction("Index", "Home");
+
+
+            return View(_context.Users.ToList());
         }
     }
 }

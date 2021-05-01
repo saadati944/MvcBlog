@@ -47,7 +47,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="LogOut">Log out</a>
                         </li>
                     }
-                    else if((bool)ViewData["showsignin"])
+                    else if(ViewData["showsignin"] is null || (bool)ViewData["showsignin"])
                     {
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Log in</a>
@@ -56,7 +56,13 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="SignUp">Sign Up</a>
                         </li>
                     }
-                     
+                    @if (ViewData["userisadmin"] is not null && (bool) ViewData["userisadmin"])
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="ShowUsers">All users</a>
+                        </li>
+                    }
+
                 </ul>
             </div>
         </div>
