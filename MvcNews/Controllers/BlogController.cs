@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MvcNews.Data;
 using MvcNews.Models;
+using MvcNews.ViewModels;
 
 namespace MvcNews.Controllers
 {
@@ -87,23 +88,6 @@ namespace MvcNews.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("Index", "Home");
-        }
-
-
-        public class PostModel
-        {
-            [Required] public string Title { get; set; }
-
-            [Required] public string Abstract { get; set; }
-
-            [Required] public string Content { get; set; }
-
-            [Required] public string Category { get; set; }
-
-            [Display(Name = "Tags", Prompt = "tags, separated, with, commas")]
-            public string Tags { get; set; }
-
-            public IFormFile Poster { set; get; }
         }
 
         private string getPosterPath(IFormFile file)
@@ -237,12 +221,6 @@ namespace MvcNews.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("MyPosts", "Blog");
-        }
-
-        public class ConfirmPostRemovingModel
-        {
-            [HiddenInput] public bool Sure { get; set; } = true;
-            [HiddenInput] public int Id { get; set; }
         }
 
         public IActionResult EditPost(int? id)
