@@ -31,19 +31,17 @@ namespace MvcNews.Controllers
             Task<Models.User> user = _userManager.GetUserAsync(User);
             user.Wait();
             _user = user.Result;
+            if (_user is not null)
+            {
+                ViewData["username"] = _user.UserName;   
+            }
+            else
+                ViewData["showsignin"] = true;
         }
 
         public IActionResult Index()
         {
             setUser();
-            if (_user is null)
-            {
-                ViewData["loggedin"] = false;
-                return View(_context.Posts.OrderByDescending(x => x.CreationDate).Take(10).Include(x => x.Category)
-                    .Include(x => x.PostTags).ThenInclude(x => x.Tag).ToList());
-            }
-
-            ViewData["loggedin"] = true;
             return View(_context.Posts.OrderByDescending(x => x.CreationDate).Take(10).Include(x => x.Category)
                 .Include(x => x.PostTags).ThenInclude(x => x.Tag).ToList());
 
