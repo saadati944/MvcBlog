@@ -44,6 +44,8 @@ namespace MvcNews.Controllers
             if (_user is not null)
             {
                 ViewData["username"] = _user.UserName;
+                if(_user.IsSuperUser)
+                    ViewData["userisadmin"] = true;
                 ViewData["showsignin"] = false;
             }
         }
@@ -197,8 +199,7 @@ namespace MvcNews.Controllers
         }
 
         public IActionResult MyPosts(string? id)
-        {
-            ViewData["showsignin"] = false;   
+        {   
             if (id is not null)
             {
                 _user = _identityContext.Users.Single(x => x.Id == id);
@@ -208,8 +209,6 @@ namespace MvcNews.Controllers
                 setUser();
                 if (!_user.IsAdmin)
                     return RedirectToAction("Index", "Home");
-                if(_user.IsSuperUser)
-                    ViewData["userisadmin"] = true;
             }
             return View(_context.Posts.Where(x => x.UserId == _user.Id).OrderByDescending(x => x.CreationDate)
                 .Include(x => x.PostTags).ThenInclude(x => x.Tag)

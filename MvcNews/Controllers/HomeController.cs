@@ -35,6 +35,8 @@ namespace MvcNews.Controllers
             {
                 ViewData["username"] = _user.UserName;
                 ViewData["showsignin"] = false;
+                if(_user.IsSuperUser)
+                    ViewData["userisadmin"] = true;
             }
         }
 

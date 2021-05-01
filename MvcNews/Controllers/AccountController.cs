@@ -30,9 +30,10 @@ namespace MvcNews.Controllers
             if (_user is not null)
             {
                 ViewData["username"] = _user.UserName;
+                if(_user.IsSuperUser)
+                    ViewData["userisadmin"] = true;
+                ViewData["showsignin"] = false;
             }
-            else
-                ViewData["showsignin"] = true;
         }
 
         //logout
