@@ -169,7 +169,6 @@ namespace MvcNews.Controllers
 
         public IActionResult Post(int id)
         {
-            ViewData["showsignin"] = false;
             Post p = _context.Posts.Include(x => x.Category)
                 .Include(x => x.PostTags).ThenInclude(x => x.Tag).FirstOrDefault(p => p.Id == id);
 
@@ -188,13 +187,11 @@ namespace MvcNews.Controllers
 
         public IActionResult Tags()
         {
-            ViewData["showsignin"] = false;
             return View(_context.Tags.Include(x => x.PostTags).ThenInclude(x => x.Post).ToList());
         }
 
         public IActionResult Categories()
         {
-            ViewData["showsignin"] = false;
             return View(_context.Categories.Include(x => x.Posts).ToList());
         }
 
